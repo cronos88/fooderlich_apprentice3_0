@@ -1,62 +1,73 @@
 import 'package:flutter/material.dart';
-import 'package:fooderlich/pages/card1.dart';
-import 'package:fooderlich/pages/card2.dart';
-import 'package:fooderlich/pages/card3.dart';
+import 'package:provider/provider.dart';
+
+import 'models/models.dart';
+import 'screens/explore_screen.dart';
+import 'screens/grocery_screen.dart';
+import 'screens/recipes_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  HomeState createState() => HomeState();
 }
 
-class _HomeState extends State<Home> {
-  int _selectedIndex = 0;
+class HomeState extends State<Home> {
+  // int _selectedIndex = 0;
 
-  static List<Widget> pages = [
-    const Card1(),
-    const Card2(),
-    const Card3(),
-    Container(color: Colors.blue)
+  static List<Widget> pages = <Widget>[
+    const ExploreScreen(),
+    RecipesScreen(),
+    const GroceryScreen(),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Fooderlich',
-          style: Theme.of(context).textTheme.headline6,
-        ),
-      ),
-      body: pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Theme.of(context).textSelectionTheme.selectionColor,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_giftcard),
-            label: 'Card',
+    return Consumer<TabManager>(
+      builder: (context, tabManager, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'Fooderlich',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            centerTitle: true,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_giftcard),
-            label: 'Card2',
+          body: IndexedStack(index: tabManager.selectedTab, children: pages),
+          // body: pages[tabManager.selectedTab], //cambio
+          bottomNavigationBar: BottomNavigationBar(
+            selectedItemColor:
+                Theme.of(context).textSelectionTheme.selectionColor,
+            currentIndex: tabManager.selectedTab, //cambio
+            onTap: (index) {
+              tabManager.goToTab(index);
+            },
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.explore),
+                label: 'Explore',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.book),
+                label: 'Recipes',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.list),
+                label: 'To Buy',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_giftcard),
-            label: 'Card3',
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
-// QUEDE EN LA PAGINA 151
+// SIGUE LA PAGINA 275 Chapter 7: Routes & Navigation
